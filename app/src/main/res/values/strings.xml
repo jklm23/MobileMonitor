@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">手机监测</string>
+    <string name="brand">品牌：</string>
+    <string name="model">型号：</string>
+    <string name="IMEI">IMEI：</string>
+    <string name="run_Proc">正在运行：</string>
+    <string name="memory">总内存：</string>
+    <string name="a_memory">可用内存：</string>
+    <string name="SIM1">SIM1：</string>
+    <string name="SIM2">SIM2：</string>
+    <string name="CurrentLevel">当前电量：</string>
+    <string name="Location">地理位置：</string>
+    <string name="noReadPhoneState">无权限查看</string>
+
+    <string name="unknwon">未知</string>
+</resources>
