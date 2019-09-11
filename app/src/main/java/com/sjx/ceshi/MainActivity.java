@@ -14,12 +14,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.sjx.Action.BatteryReceiver;
+import com.sjx.Action.Connection;
 import com.sjx.Action.GetPhoneInfo;
 import com.sjx.Action.GetSimInfo;
 import com.sjx.Model.BasicInfo;
@@ -38,15 +40,20 @@ public class MainActivity extends AppCompatActivity {
     private TextView trun_Proc;
     private TextView tMemory;
     private TextView tA_memory;
-    private TextView tSIM1;
-    private TextView tSIM2;
+//    private TextView tSIM1;
+//    private TextView tSIM2;
     private TextView tCurrentLevel;
     private TextView tLocation;
+    private TextView tTimeInterVal;
+
     private int i;
+
+    private int timeInterVal;//采集时间间隔
+
 
     private BasicInfo bi=new BasicInfo();
     private BatteryReceiver m_receiver;
-
+    private Connection conn;
     public LocationClient mLocationClient = null;
     private MyLocationListener myLocationListener = new MyLocationListener();
 
@@ -113,7 +120,9 @@ public class MainActivity extends AppCompatActivity {
      */
     private void refresh(){
 
-
+        conn.toConnect(this);
+        if(conn.isFlag())
+            timeInterVal=conn.getTimeInterVal();
         bi.setBrand(GetPhoneInfo.getDeviceBrand());
         bi.setModel(GetPhoneInfo.getDeviceModel());
         bi.setIMEI(GetPhoneInfo.getIMEI(this));
@@ -131,8 +140,9 @@ public class MainActivity extends AppCompatActivity {
         tA_memory.setText(bi.getA_memory());
         tCurrentLevel.setText(bi.getCurrentLevel());
         tLocation.setText(bi.getLocation());
-
-
+        String timeInter=timeInterVal+"";
+        tTimeInterVal.setText(timeInter);
+        Log.i("采集",timeInter);
         bi.setRunning_APP(GetPhoneInfo.getTopActivityPackageName(this));
         trun_Proc.setText(bi.getRunning_APP());
 
@@ -150,12 +160,13 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
     private Runnable mRunnabel=new Runnable() {
         @Override
         public void run() {
             while (true){
                 try {
-                    Thread.sleep(3000);//3秒
+                    Thread.sleep(timeInterVal*1000);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }
@@ -169,22 +180,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        true_button=(Button)findViewById(R.id.button1);
-//        //false_button=(Button)findViewById(R.id.button2);
-//        tvw=(TextView)findViewById(R.id.textView);
-//        tvw.setText(R.string.counter);
-//        temp=tvw.getText().toString();
-//        i=Integer.parseInt(temp);
-//        true_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //Toast.makeText(MainActivity.this,R.string.true_answer,Toast.LENGTH_SHORT).show();
-//                i++;
-//                temp=i+"";
-//                tvw.setText(temp);
-//            }
-//        });
-       // bi=new BasicInfo();
+
 
         //检查权限，没有的话尝试获取权限
         if(checkPermissionAllGranted(PermissionsArrays)==false) {
@@ -194,9 +190,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        new Thread(mRunnabel).start();
-        tSIM1=(TextView)findViewById(R.id.tSIM1);
-        tSIM2=(TextView)findViewById(R.id.tSIM2);
+
+//        tSIM1=(TextView)findViewById(R.id.tSIM1);
+//        tSIM2=(TextView)findViewById(R.id.tSIM2);
         tBrand=(TextView)findViewById(R.id.tBrand);
         tModel=(TextView)findViewById(R.id.tModel);
         tIMEI=(TextView)findViewById(R.id.tIMEI);
@@ -205,11 +201,13 @@ public class MainActivity extends AppCompatActivity {
         trun_Proc=(TextView)findViewById(R.id.trun_proc);
         tCurrentLevel=(TextView)findViewById(R.id.tCurrentLevel);
         tLocation=(TextView)findViewById(R.id.tLocation);
+        tTimeInterVal=(TextView)findViewById(R.id.tTimeInterVal);
 
         GetSimInfo si1=new GetSimInfo();
         GetSimInfo si2=new GetSimInfo();
-        si1.sim(this,0);
-        si2.sim(this,1);
+
+
+        timeInterVal=5;
 
 
         IntentFilter intentFilter=new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -274,6 +272,12 @@ public class MainActivity extends AppCompatActivity {
 //需将配置好的LocationClientOption对象，通过setLocOption方法传递给LocationClient对象使用
 //更多LocationClientOption的配置，请参照类参考中LocationClientOption类的详细说明
         mLocationClient.start();
+
+
+        conn=new Connection(timeInterVal);
+        conn.toConnect(this);
+        refresh();
+        new Thread(mRunnabel).start();
     }
 
 

@@ -11,6 +11,6 @@
     <string name="CurrentLevel">当前电量：</string>
     <string name="Location">位置\n</string>
     <string name="noReadPhoneState">无权限查看</string>
-
+    <string name="timeInterVal">采集间隔时间：</string>
     <string name="unknwon">未知</string>
 </resources>
