@@ -9,7 +9,7 @@
     <string name="SIM1">SIM1：</string>
     <string name="SIM2">SIM2：</string>
     <string name="CurrentLevel">当前电量：</string>
-    <string name="Location">地理位置：</string>
+    <string name="Location">位置\n</string>
     <string name="noReadPhoneState">无权限查看</string>
 
     <string name="unknwon">未知</string>
