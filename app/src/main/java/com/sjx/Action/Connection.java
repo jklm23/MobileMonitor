@@ -13,7 +13,7 @@ import com.android.volley.toolbox.Volley;
 
 
 public class Connection {
-    private static final String url="http://90b884f.nat123.cc:24141/MobileMonitorServer/testservlet";
+    private static final String url="http://jklm23.wezoz.com/MobileMonitorServer/testservlet";
     private static final String tag="connection";
     private static boolean flag=false;//连接服务器
     private static int timeInterVal;//间隔采集时间
@@ -64,7 +64,8 @@ public class Connection {
             @Override
             public void onErrorResponse(VolleyError error) {
                 //做自己的响应错误操作，如Toast提示（“请稍后重试”等）
-                Toast.makeText(context,"连接失败",Toast.LENGTH_SHORT).show();
+                if(!flag)
+                    Toast.makeText(context,"连接失败",Toast.LENGTH_SHORT).show();
                 flag=false;
                 Log.e("连接失败", error.getMessage(), error);
             }

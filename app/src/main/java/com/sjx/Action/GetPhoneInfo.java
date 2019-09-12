@@ -7,6 +7,7 @@ import android.app.usage.UsageStatsManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import android.telephony.TelephonyManager;
@@ -17,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -109,24 +111,45 @@ public class GetPhoneInfo {
         // 以最后使用时间为标准进行排序
         if(usageStatsList != null) {
             PackagesName="";
-            SortedMap<Long, UsageStats> sortedMap = new TreeMap<Long, UsageStats>();
+            SortedMap<Long, UsageStats> sortedMap = new TreeMap<Long, UsageStats>(
+                    new Comparator<Long>() {
+                        @Override
+                        public int compare(Long o1, Long o2) {
+                            return o2.compareTo(o1);
+                        }
+                    }
+
+
+            );
             for (UsageStats usageStats : usageStatsList) {
-                if(!usageStats.getPackageName().equals("com.sjx.ceshi"))
+                if(!usageStats.getPackageName().equals("com.sjx.ceshi")&&!usageStats.getPackageName().equals("com.miui.home"))//去掉自身和小米桌面
                     sortedMap.put(usageStats.getLastTimeUsed(), usageStats);
             }
             Set s = sortedMap.entrySet();
             Iterator i = s.iterator();
+            List<PackageInfo> packages = context.getPackageManager().getInstalledPackages(0);
             boolean flag=false;
-
+            int maxApp=5,k=0;
             while (i.hasNext()) {
+                if(k==maxApp)break;
                 Map.Entry m=(Map.Entry)i.next();
                 UsageStats us=(UsageStats)m.getValue();
                 String packagename=us.getPackageName();
+                for(int ii=0;ii<packages.size();ii++){
+                    //Log.i("packageName",packages.get(ii).packageName);
+                    if(packagename.equals(packages.get(ii).packageName)) {
+                        Log.i("应用包名",packagename);
+                        packagename = packages.get(ii).applicationInfo.loadLabel(context.getPackageManager()).toString();
+                        Log.i("应用名称",packagename);
+
+                    }
+                }
                 if(flag)
                     PackagesName+="\n";
                 else
                     flag=true;
                 PackagesName+=packagename;
+                k++;
             }
 
 

@@ -24,6 +24,7 @@ import com.sjx.Action.BatteryReceiver;
 import com.sjx.Action.Connection;
 import com.sjx.Action.GetPhoneInfo;
 import com.sjx.Action.GetSimInfo;
+import com.sjx.Action.SendInfor;
 import com.sjx.Model.BasicInfo;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private Connection conn;
     public LocationClient mLocationClient = null;
     private MyLocationListener myLocationListener = new MyLocationListener();
-
+    private SendInfor si;
 
 
     private static final int PERMISSION_REQUEST_CODE =1;
@@ -119,10 +120,9 @@ public class MainActivity extends AppCompatActivity {
      *
      */
     private void refresh(){
+        if(!conn.isFlag())
+            conn.toConnect(this);
 
-        conn.toConnect(this);
-        if(conn.isFlag())
-            timeInterVal=conn.getTimeInterVal();
         bi.setBrand(GetPhoneInfo.getDeviceBrand());
         bi.setModel(GetPhoneInfo.getDeviceModel());
         bi.setIMEI(GetPhoneInfo.getIMEI(this));
@@ -142,10 +142,17 @@ public class MainActivity extends AppCompatActivity {
         tLocation.setText(bi.getLocation());
         String timeInter=timeInterVal+"";
         tTimeInterVal.setText(timeInter);
-        Log.i("采集",timeInter);
+       // Log.i("采集",timeInter);
         bi.setRunning_APP(GetPhoneInfo.getTopActivityPackageName(this));
         trun_Proc.setText(bi.getRunning_APP());
+        if(conn.isFlag()) {
+            timeInterVal = conn.getTimeInterVal();
+            timeInter=timeInterVal+"";
+            tTimeInterVal.setText(timeInter);
+            si=new SendInfor(bi);
+            si.toSendInfo(this);
 
+        }
 
     }
 
@@ -207,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         GetSimInfo si2=new GetSimInfo();
 
 
-        timeInterVal=5;
+        timeInterVal=10;
 
 
         IntentFilter intentFilter=new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
