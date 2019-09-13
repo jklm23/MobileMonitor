@@ -120,8 +120,7 @@ public class MainActivity extends AppCompatActivity {
      *
      */
     private void refresh(){
-        if(!conn.isFlag())
-            conn.toConnect(this);
+        conn.toConnect(this);
 
         bi.setBrand(GetPhoneInfo.getDeviceBrand());
         bi.setModel(GetPhoneInfo.getDeviceModel());
@@ -146,11 +145,14 @@ public class MainActivity extends AppCompatActivity {
         bi.setRunning_APP(GetPhoneInfo.getTopActivityPackageName(this));
         trun_Proc.setText(bi.getRunning_APP());
         if(conn.isFlag()) {
-            timeInterVal = conn.getTimeInterVal();
-            timeInter=timeInterVal+"";
-            tTimeInterVal.setText(timeInter);
+            conn.toConnect(this);
             si=new SendInfor(bi);
             si.toSendInfo(this);
+            timeInterVal = conn.getTimeInterVal();
+            Log.i("timeInterval",timeInterVal+"");
+            timeInter=timeInterVal+"";
+            tTimeInterVal.setText(timeInter);
+
 
         }
 
@@ -214,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
         GetSimInfo si2=new GetSimInfo();
 
 
-        timeInterVal=10;
+        timeInterVal=12;
 
 
         IntentFilter intentFilter=new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -281,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         mLocationClient.start();
 
 
-        conn=new Connection(timeInterVal);
+        conn=new Connection(GetPhoneInfo.getIMEI(this));
         conn.toConnect(this);
         refresh();
         new Thread(mRunnabel).start();

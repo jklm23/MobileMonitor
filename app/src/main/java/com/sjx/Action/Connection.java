@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -11,13 +12,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class Connection {
     private static final String url="http://jklm23.wezoz.com/MobileMonitorServer/testservlet";
     private static final String tag="connection";
     private static boolean flag=false;//连接服务器
     private static int timeInterVal;//间隔采集时间
-
+    private static String IMEI;
     public static boolean isFlag() {
         return flag;
     }
@@ -34,8 +38,8 @@ public class Connection {
         Connection.timeInterVal = timeInterVal;
     }
 
-    public Connection(int time){
-        timeInterVal=time;
+    public Connection(String IMEI){
+        this.IMEI=IMEI;
     }
 
 
@@ -69,16 +73,16 @@ public class Connection {
                 flag=false;
                 Log.e("连接失败", error.getMessage(), error);
             }
-        });
-        //{
-//            @Override
-//            public Map<String,String> getParams() throws AuthFailureError{
-//                Map<String,String>map=new HashMap<>();
-//                //map.put("Content-Type", "application/json; charset=utf-8");
-//                map.put("hello","123456");//;发出连接请求
-//                return map;
-//            }
- //       };
+        })
+        {
+            @Override
+            public Map<String,String> getParams() throws AuthFailureError {
+                Map<String,String>map=new HashMap<>();
+                //map.put("Content-Type", "application/json; charset=utf-8");
+                map.put("imei",IMEI);//;发出连接请求
+                return map;
+            }
+        };
 
         //设置Tag标签
         request.setTag(tag);

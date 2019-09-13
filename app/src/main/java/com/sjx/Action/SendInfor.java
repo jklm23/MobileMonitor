@@ -21,13 +21,20 @@ public class SendInfor {
     private static BasicInfo bi;
     private static final String url="http://jklm23.wezoz.com/MobileMonitorServer/getInformation";
     private static final String tag="sendInfo";
+    private static int time;
     public SendInfor(BasicInfo bii){
 
-
+        //time=10;
         bi=bii;
     }
 
+    public static int getTime() {
+        return time;
+    }
 
+    public static void setTime(int time) {
+        SendInfor.time = time;
+    }
 
     public static void toSendInfo(final Context context) {
         //取得请求队列
@@ -40,7 +47,9 @@ public class SendInfor {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.i("发送", "成功");
+                        if(response!=null)
+                            time=Integer.parseInt(response);
+                        Log.i("收到的time",time+"");
                     }
                 },new Response.ErrorListener() {
             @Override
