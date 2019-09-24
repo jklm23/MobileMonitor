@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         tLocation.setText(bi.getLocation());
         String timeInter=timeInterVal+"";
         tTimeInterVal.setText(timeInter);
-       // Log.i("采集",timeInter);
+        Log.i("刷新数据，间隔时间",timeInter);
         bi.setRunning_APP(GetPhoneInfo.getTopActivityPackageName(this));
         trun_Proc.setText(bi.getRunning_APP());
         if(conn.isFlag()) {
